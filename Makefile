@@ -1,12 +1,11 @@
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Isrc
+CXXFLAGS := -std=c++20 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Isrc -I$(shell brew --prefix boost)/include
 BUILD_DIR := build
 TARGET := $(BUILD_DIR)/mini_db
-
 SOURCES := \
 	src/main.cpp \
 
-OBJECTS := $(SOURCES:src/%.cpp=$(BUILD_DIR)/%.o)
+OBJECTS := $(patsubst src/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
 all: $(TARGET)
 
