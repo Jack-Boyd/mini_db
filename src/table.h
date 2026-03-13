@@ -17,9 +17,8 @@ struct Column
   bool nullable;
 };
 
-class Row
+struct Row
 {
-private:
   std::vector<Value> m_values;
 };
 
