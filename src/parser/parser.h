@@ -102,11 +102,13 @@ private:
 
     node.tableName = {next()};
 
-    expect("(");
-    while (!checkKeyword(")")) {
-      node.columns.push_back(next());
+    if (checkKeyword("(")) {
+      next();
+      while (!checkKeyword(")")) {
+        node.columns.push_back(next());
+      }
+      expect(")");
     }
-    expect(")");
 
     expect("VALUES");
 
