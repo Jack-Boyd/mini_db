@@ -9,16 +9,6 @@ struct SelectNode;
 struct InsertNode;
 struct CreateNode;
 
-struct Column
-{
-  std::string name;
-};
-
-struct Table
-{
-  std::string name;
-};
-
 struct Condition
 {
   std::string column;
@@ -30,39 +20,30 @@ struct ColumnDef
 {
   std::string name;
   std::string type;
+  bool nullable;
 };
 
 struct SelectNode
 {
-  std::vector<Column> columns;
-  Table table;
+  std::string tableName;
+  std::vector<std::string> columns;
   std::optional<Condition> where;
 };
 
 struct InsertNode
 {
-  Table table;
+  std::string tableName;
   std::vector<std::string> columns;
   std::vector<std::string> values;
 };
 
 struct CreateNode
 {
-  Table table;
+  std::string tableName;
   std::vector<ColumnDef> columnDefs;
 };
 
 using Statement = std::variant<SelectNode, InsertNode, CreateNode>;
-
-std::ostream &operator<<(std::ostream &outs, const Column &col)
-{
-  return outs << col.name;
-}
-
-std::ostream &operator<<(std::ostream &outs, const Table &table)
-{
-  return outs << table.name;
-}
 
 std::ostream &operator<<(std::ostream &outs, const Condition &cond)
 {
@@ -85,7 +66,7 @@ std::ostream &operator<<(std::ostream &outs, const SelectNode &node)
     outs << node.columns[i];
   }
 
-  outs << " FROM " << node.table;
+  outs << " FROM " << node.tableName;
 
   if (node.where.has_value()) {
     outs << " WHERE " << *node.where;
@@ -96,7 +77,7 @@ std::ostream &operator<<(std::ostream &outs, const SelectNode &node)
 
 std::ostream &operator<<(std::ostream &outs, const InsertNode &node)
 {
-  outs << "INSERT INTO " << node.table;
+  outs << "INSERT INTO " << node.tableName;
 
   if (!node.columns.empty()) {
     outs << " (";
@@ -123,7 +104,7 @@ std::ostream &operator<<(std::ostream &outs, const InsertNode &node)
 
 std::ostream &operator<<(std::ostream &outs, const CreateNode &node)
 {
-  outs << "CREATE TABLE " << node.table << " (";
+  outs << "CREATE TABLE " << node.tableName << " (";
 
   for (size_t i = 0; i < node.columnDefs.size(); ++i) {
     if (i > 0) {

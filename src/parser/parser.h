@@ -80,7 +80,7 @@ private:
     } while (!checkKeyword("FROM") && !atEnd());
 
     expect("FROM");
-    node.table = {next()};
+    node.tableName = {next()};
 
     if (!atEnd() && checkKeyword("WHERE")) {
       next(); 
@@ -100,7 +100,7 @@ private:
     expect("INSERT");
     expect("INTO");
 
-    node.table = {next()};
+    node.tableName = {next()};
 
     expect("(");
     while (!checkKeyword(")")) {
@@ -124,13 +124,22 @@ private:
     expect("CREATE");
     expect("TABLE");
 
-    node.table = {next()};
+    node.tableName = {next()};
 
     expect("(");
     while (!checkKeyword(")")) {
       ColumnDef def;
       def.name = next();
       def.type = next();
+      def.nullable = true;
+      if (checkKeyword("NOT")) {
+        next();
+        if (checkKeyword("NULL")) {
+          def.nullable = false;
+          next();
+        }
+      }
+
       node.columnDefs.push_back(def);
     }
     expect(")");
