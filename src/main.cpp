@@ -8,52 +8,37 @@
 #include "parser/parser.h"
 #include "table.h"
 
-struct Person
+Statement generateStatement(const std::string &query) 
 {
-  std::string name;
-  int age;
-  std::string phone;
-};
+  boost::char_separator<char> sep(" ,");
+  boost::tokenizer<boost::char_separator<char>> tokenizer(query, sep);
+  std::vector<std::string> tokens(tokenizer.begin(), tokenizer.end());
+
+  Parser parser(tokens);
+  return parser.parse();
+}
 
 int main() 
 {
   std::string create = "CREATE TABLE Persons ( PersonID int, LastName varchar(255), FirstName varchar(255), Address varchar(255), City varchar(255) )";
   std::string insert = "INSERT INTO Persons VALUES ( 0, Boyd, Jack, 20 Narra Ave, Auckland )";
-  boost::char_separator<char> sep(" ,");
-  boost::tokenizer<boost::char_separator<char>> tokenizerCreate(create, sep);
-  boost::tokenizer<boost::char_separator<char>> tokenizerInsert(insert, sep);
-  std::vector<std::string> tokensCreate(tokenizerCreate.begin(), tokenizerCreate.end());
-  std::vector<std::string> tokensInsert(tokenizerInsert.begin(), tokenizerInsert.end());
-
-  Parser parserCreate(tokensCreate);
-  Parser parserInsert(tokensInsert);
-  Statement statementCreate = parserCreate.parse();
-  Statement statementInsert = parserInsert.parse();
+  Statement statementCreate = generateStatement(create);
+  Statement statementInsert = generateStatement(insert);
 
   Table person_table(std::get<CreateNode>(statementCreate));
   person_table.insert(std::get<InsertNode>(statementInsert));
 
-  std::cout << person_table.name() << std::endl;
-  for (const auto &col : person_table.schema()) {
-    std::cout << col.name << " ";
-  }
-    std::cout << std::endl;
-  for (const auto &row : person_table.rows()) {
-    for (const auto &value : row.values) {
-      std::visit([](const auto &v) {
-        using T = std::decay_t<decltype(v)>;
+  std::cout << person_table << std::endl;
 
-        if constexpr (std::is_same_v<T, std::monostate>)
-          std::cout << "NULL ";
-        else
-          std::cout << v << " ";
-      }, value);
-    }
-    std::cout << std::endl;
-  }
   return 0;
 }
 
+// struct Person
+// {
+//   std::string name;
+//   int age;
+//   std::string phone;
+// };
 // int main()
 // {
 //   const std::string quitWord = "quit";

@@ -40,7 +40,7 @@ public:
     }
     m_rows.push_back(row);
   };
-  
+
   const std::string &name() const { return m_name; }
   const std::vector<Column> &schema() const { return m_schema; }
   const std::vector<Row> &rows() const { return m_rows; }
@@ -51,3 +51,28 @@ private:
   std::vector<Row> m_rows;
   size_t m_noCols;
 };
+
+std::ostream &operator<<(std::ostream &outs, const Table &table)
+{
+  outs << table.name() << std::endl;
+  for (const auto &col : table.schema()) {
+    outs << col.name << " ";
+  }
+  outs << std::endl;
+
+  for (const auto &row : table.rows()) {
+    for (const auto &value : row.values) {
+      std::visit([&outs](const auto &v) {
+        using T = std::decay_t<decltype(v)>;
+
+        if constexpr (std::is_same_v<T, std::monostate>)
+          outs << "NULL ";
+        else
+          outs << v << " ";
+      }, value);
+    }
+    outs << std::endl;
+  }
+  
+  return outs;
+}
