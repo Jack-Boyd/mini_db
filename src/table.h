@@ -52,7 +52,7 @@ private:
   size_t m_noCols;
 };
 
-std::ostream &operator<<(std::ostream &outs, const Table &table)
+inline std::ostream &operator<<(std::ostream &outs, const Table &table)
 {
   outs << table.name() << std::endl;
   for (const auto &col : table.schema()) {

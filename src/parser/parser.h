@@ -56,7 +56,8 @@ private:
 
   bool atEnd() const { return m_pos >= m_tokens.size(); }
 
-  bool checkKeyword(const std::string& kw) const {
+  bool checkKeyword(const std::string& kw) const 
+  {
     return !atEnd() && toUpper(peek()) == kw;
   }
 
@@ -121,7 +122,8 @@ private:
     return node;
   }
 
-  CreateNode parseCreate() {
+  CreateNode parseCreate()
+  {
     CreateNode node;
     expect("CREATE");
     expect("TABLE");

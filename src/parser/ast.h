@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -45,17 +47,17 @@ struct CreateNode
 
 using Statement = std::variant<SelectNode, InsertNode, CreateNode>;
 
-std::ostream &operator<<(std::ostream &outs, const Condition &cond)
+inline std::ostream &operator<<(std::ostream &outs, const Condition &cond)
 {
   return outs << cond.column << " " << cond.op << " " << cond.value;
 }
 
-std::ostream &operator<<(std::ostream &outs, const ColumnDef &def)
+inline std::ostream &operator<<(std::ostream &outs, const ColumnDef &def)
 {
   return outs << def.name << " " << def.type;
 }
 
-std::ostream &operator<<(std::ostream &outs, const SelectNode &node)
+inline std::ostream &operator<<(std::ostream &outs, const SelectNode &node)
 {
   outs << "SELECT ";
 
@@ -75,7 +77,7 @@ std::ostream &operator<<(std::ostream &outs, const SelectNode &node)
   return outs;
 }
 
-std::ostream &operator<<(std::ostream &outs, const InsertNode &node)
+inline std::ostream &operator<<(std::ostream &outs, const InsertNode &node)
 {
   outs << "INSERT INTO " << node.tableName;
 
@@ -102,7 +104,7 @@ std::ostream &operator<<(std::ostream &outs, const InsertNode &node)
   return outs;
 }
 
-std::ostream &operator<<(std::ostream &outs, const CreateNode &node)
+inline std::ostream &operator<<(std::ostream &outs, const CreateNode &node)
 {
   outs << "CREATE TABLE " << node.tableName << " (";
 
@@ -117,7 +119,7 @@ std::ostream &operator<<(std::ostream &outs, const CreateNode &node)
   return outs;
 }
 
-std::ostream &operator<<(std::ostream &outs, const Statement &stmt)
+inline std::ostream &operator<<(std::ostream &outs, const Statement &stmt)
 {
   std::visit(
       [&outs](const auto &node) {
